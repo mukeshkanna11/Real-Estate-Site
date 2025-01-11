@@ -5,6 +5,7 @@ import axios from 'axios';
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'user' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);  // Track loading state
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,62 +14,84 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // Call your backend registration API
-      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
+    setLoading(true);  // Start loading state
 
-      // Alert the success message
-      alert(response.data.message || 'Registration successful!');
-      navigate('/login'); // Redirect to the login page
+    if (!formData.name || !formData.email || !formData.password) {
+      setLoading(false);  // Stop loading if validation fails
+      setError('All fields are required');
+      return;
+    }
+
+    try {
+      const response = await axios.post('https://real-estate-site-04db.onrender.com/api/auth/register', formData);
+
+      if (response.data.success) {
+        alert('Registration successful!');
+        navigate('/login'); // Redirect to login page
+      } else {
+        throw new Error(response.data.message || 'Registration failed');
+      }
     } catch (err) {
-      // Handle and display error messages
-      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
+      // Display a more descriptive error message
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again later.';
       setError(errorMessage);
       alert(errorMessage);
+    } finally {
+      setLoading(false); // Stop loading state
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-xl font-bold mb-4">Register</h2>
-      {error && <p className="text-red-500">{error}</p>}
+    <div className="container p-4 mx-auto">
+      <h2 className="mb-4 text-xl font-bold">Register</h2>
+
+      {error && <p className="mb-4 text-red-500">{error}</p>}  {/* Display error message */}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           name="name"
           placeholder="Full Name"
           onChange={handleChange}
+          value={formData.name}
           required
-          className="block w-full border p-2 rounded"
+          className="block w-full p-2 border rounded"
         />
         <input
           type="email"
           name="email"
           placeholder="Email"
           onChange={handleChange}
+          value={formData.email}
           required
-          className="block w-full border p-2 rounded"
+          className="block w-full p-2 border rounded"
         />
         <input
           type="password"
           name="password"
           placeholder="Password"
           onChange={handleChange}
+          value={formData.password}
           required
-          className="block w-full border p-2 rounded"
+          className="block w-full p-2 border rounded"
         />
         <select
           name="role"
           value={formData.role}
           onChange={handleChange}
-          className="block w-full border p-2 rounded"
+          className="block w-full p-2 border rounded"
           required
         >
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Register
+
+        <button 
+          type="submit" 
+          className={`px-4 py-2 text-white rounded ${loading ? 'bg-gray-400' : 'bg-blue-500'}`} 
+          disabled={loading}
+        >
+          {loading ? 'Processing...' : 'Register'}
         </button>
       </form>
     </div>

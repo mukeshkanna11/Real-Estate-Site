@@ -1,10 +1,12 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const cors = require('cors'); // Import CORS package
+
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const agentRoutes = require('./routes/agentRoutes');
-const propertyRoutes = require('./routes/propertyRoutes'); // Import property routes
+const propertyRoutes = require('./routes/propertyRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -14,6 +16,13 @@ console.log('🔄 Starting the server...');
 
 // Initialize Express App
 const app = express();
+
+// CORS Middleware to allow all origins (or specify specific domains)
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow only the specific frontend origin
+  methods: 'GET,POST,PUT,DELETE', // Allow specific methods
+  credentials: true, // If you are sending cookies or authentication headers
+}));
 
 // Connect to MongoDB
 connectDB();
