@@ -17,12 +17,25 @@ console.log('🔄 Starting the server...');
 // Initialize Express App
 const app = express();
 
-// CORS Middleware to allow all origins (or specify specific domains)
-app.use(cors({
-  origin: 'http://localhost:5173', // Allow only the specific frontend origin
-  methods: 'GET,POST,PUT,DELETE', // Allow specific methods
-  credentials: true, // If you are sending cookies or authentication headers
-}));
+// CORS Middleware to allow specific origins
+const allowedOrigins = [
+  'http://localhost:5173', // Local development
+  'https://zingy-pie-d0b7b2.netlify.app', // Netlify deployment
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: 'GET,POST,PUT,DELETE', // Allow specific methods
+    credentials: true, // Enable cookies and authentication headers
+  })
+);
 
 // Connect to MongoDB
 connectDB();
