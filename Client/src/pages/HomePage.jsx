@@ -5,12 +5,14 @@ import SearchFilters from '../components/SearchFilters';
 
 const HomePage = () => {
   const [properties, setProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchProperties();
         setProperties(response.data);
+        setFilteredProperties(response.data); // Initialize filtered properties
       } catch (error) {
         console.error('Failed to fetch properties:', error);
       }
@@ -19,8 +21,27 @@ const HomePage = () => {
   }, []);
 
   const handleSearch = (filters) => {
-    console.log('Filters:', filters);
-    // Add search functionality here
+    if (!filters.location && !filters.priceRange && !filters.type) {
+      setFilteredProperties(properties); // Reset to all properties
+      return;
+    }
+
+    const filtered = properties.filter((property) => {
+      const matchesLocation = filters.location
+        ? property.location.toLowerCase().includes(filters.location.toLowerCase())
+        : true;
+      const matchesPriceRange = filters.priceRange
+        ? (() => {
+            const [min, max] = filters.priceRange.split('-').map(Number);
+            return property.price >= min && property.price <= max;
+          })()
+        : true;
+      const matchesType = filters.type ? property.type === filters.type : true;
+
+      return matchesLocation && matchesPriceRange && matchesType;
+    });
+
+    setFilteredProperties(filtered);
   };
 
   return (
@@ -47,8 +68,8 @@ const HomePage = () => {
       <section className="container px-4 py-8 mx-auto">
         <h2 className="mb-6 text-2xl font-bold text-center text-blue-700">Featured Properties</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {properties.length > 0 ? (
-            properties.map((property) => (
+          {filteredProperties.length > 0 ? (
+            filteredProperties.map((property) => (
               <PropertyCard key={property._id} property={property} />
             ))
           ) : (

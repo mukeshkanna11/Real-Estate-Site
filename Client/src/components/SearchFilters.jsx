@@ -12,6 +12,12 @@ const SearchFilters = ({ onSearch }) => {
     onSearch(filters);
   };
 
+  const handleClear = () => {
+    const clearedFilters = { location: '', priceRange: '', type: '' };
+    setFilters(clearedFilters);
+    onSearch(clearedFilters);
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -27,6 +33,7 @@ const SearchFilters = ({ onSearch }) => {
           id="location"
           name="location"
           placeholder="Enter location"
+          value={filters.location}
           onChange={handleChange}
           className="block w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -42,6 +49,7 @@ const SearchFilters = ({ onSearch }) => {
           id="priceRange"
           name="priceRange"
           placeholder="e.g., 1000-5000"
+          value={filters.priceRange}
           onChange={handleChange}
           className="block w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -55,6 +63,7 @@ const SearchFilters = ({ onSearch }) => {
         <select
           id="type"
           name="type"
+          value={filters.type}
           onChange={handleChange}
           className="block w-full px-4 py-2 mt-1 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
@@ -65,13 +74,20 @@ const SearchFilters = ({ onSearch }) => {
         </select>
       </div>
 
-      {/* Search Button */}
-      <div className="flex items-end">
+      {/* Buttons */}
+      <div className="flex items-end gap-2">
         <button
           type="submit"
           className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
           Search
+        </button>
+        <button
+          type="button"
+          onClick={handleClear}
+          className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        >
+          Clear Filters
         </button>
       </div>
     </form>
