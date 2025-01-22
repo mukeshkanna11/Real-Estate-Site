@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API = axios.create({ baseURL: 'https://real-estate-site-04db.onrender.com/api' });
 
 export const fetchProperties = () => API.get('/properties');
 export const fetchPropertyDetails = (id) => API.get(`/properties/${id}`);
