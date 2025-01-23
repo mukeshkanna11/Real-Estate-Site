@@ -26,9 +26,17 @@ const Register = () => {
     setError('');
     setLoading(true);
 
+    // Check for empty fields
     if (!formData.name.trim() || !formData.email.trim() || !formData.password.trim()) {
       setLoading(false);
       setError('All fields are required');
+      return;
+    }
+
+    // Check for minimum password length
+    if (formData.password.length < 6) {
+      setLoading(false);
+      setError('Password must be at least 6 characters long');
       return;
     }
 
