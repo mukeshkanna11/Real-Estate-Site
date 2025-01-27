@@ -1,15 +1,48 @@
 import React from 'react';
 
 // AgentCard component to display detailed information about an agent
-const AgentCard = ({ agent }) => {
-  if (!agent) {
+const AgentCard = ({ agent, loading, error, onRetry }) => {
+  // Loading State
+  if (loading) {
     return (
       <div className="flex items-center justify-center p-4">
-        <p className="text-lg text-gray-500">Loading agent details...</p>
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+          <p className="mt-4 text-lg text-gray-500">Loading agent details...</p>
+        </div>
       </div>
     );
   }
 
+  // Error State
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <div className="text-center">
+          <p className="text-lg text-red-500">{error}</p>
+          {onRetry && (
+            <button
+              onClick={onRetry}
+              className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+            >
+              Retry
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback if agent data is missing
+  if (!agent) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <p className="text-lg text-gray-500">Agent details not available.</p>
+      </div>
+    );
+  }
+
+  // Render Agent Details
   return (
     <div className="max-w-sm p-6 bg-white rounded-lg shadow-lg">
       {/* Agent Name and Position */}
@@ -35,7 +68,7 @@ const AgentCard = ({ agent }) => {
             href={`tel:${agent.phone}`}
             className="text-blue-500 underline transition duration-300 hover:text-blue-700"
           >
-            {agent.phone}
+            {agent.phone || 'Not available'}
           </a>
         </p>
         <p className="text-gray-600">

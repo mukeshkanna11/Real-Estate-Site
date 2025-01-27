@@ -2,56 +2,78 @@ import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-
-// You can import a custom icon or use a free icon library like Font Awesome
-import { FaUserAlt } from 'react-icons/fa'; 
+import { FaUserAlt } from 'react-icons/fa';
+import { MdErrorOutline } from 'react-icons/md';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const AgentList = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const response = await axios.get('https://real-estate-site-04db.onrender.com/api/agent');
-        setAgents(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching agents:', err);
-        setError('Failed to load agents.');
-        setLoading(false);
-      }
-    };
+  const fetchAgents = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('https://real-estate-site-04db.onrender.com/api/agent');
+      setAgents(response.data);
+    } catch (err) {
+      console.error('Error fetching agents:', err);
+      setError('Failed to load agents. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAgents();
   }, []);
 
   const handleContactAgent = (agentName) => {
     toast.success(
       <div>
-        <p>Agent will connect with you soon!</p>
+        <p>Agent {agentName} will connect with you soon!</p>
         <div className="mt-2 text-center">
           <FaUserAlt className="w-12 h-12 mx-auto text-gray-500" />
         </div>
       </div>,
       {
-        position: 'top-right',  // Using string instead of toast.POSITION.TOP_RIGHT
+        position: 'top-right',
         autoClose: 5000,
       }
     );
-  };  
+  };
 
   if (loading) {
-    return <p className="text-center text-gray-500">Loading agents...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <AiOutlineLoading3Quarters className="w-12 h-12 text-gray-500 animate-spin" />
+        <p className="ml-4 text-lg text-gray-500">Loading agents...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <MdErrorOutline className="w-12 h-12 text-red-500" />
+        <p className="mt-4 text-lg text-center text-red-500">{error}</p>
+        <button
+          onClick={fetchAgents}
+          className="px-4 py-2 mt-6 text-white bg-blue-600 rounded shadow hover:bg-blue-700"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
   if (agents.length === 0) {
-    return <p className="text-center text-gray-500">No agents available at the moment.</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-lg text-gray-500">No agents available at the moment.</p>
+      </div>
+    );
   }
 
   return (

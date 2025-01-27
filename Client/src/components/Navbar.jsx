@@ -1,8 +1,22 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { FaHome, FaSignInAlt, FaUser, FaRegBuilding, FaBuilding, FaUserTie } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  FaHome,
+  FaUserTie,
+  FaUser,
+  FaRegBuilding,
+  FaSignOutAlt,
+  FaListAlt,
+} from 'react-icons/fa';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user'); // Clear user session data
+    navigate('/login'); // Navigate to the login page
+  };
+
   return (
     <nav className="fixed top-0 z-10 w-full text-white shadow-md bg-gradient-to-r from-teal-500 to-teal-800">
       <div className="container flex items-center justify-between px-4 py-4 mx-auto">
@@ -29,19 +43,26 @@ const Navbar = () => {
             Agents
           </Link>
           <Link
-            to="/login"
-            className="flex items-center transition hover:text-yellow-300"
-          >
-            <FaSignInAlt className="mr-2" />
-            Login
-          </Link>
-          <Link
             to="/register"
             className="flex items-center transition hover:text-yellow-300"
           >
             <FaUser className="mr-2" />
             Register
           </Link>
+          <Link
+            to="/booked-listings"
+            className="flex items-center transition hover:text-yellow-300"
+          >
+            <FaListAlt className="mr-2" />
+            Booked Listings
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="flex items-center transition hover:text-yellow-300"
+          >
+            <FaSignOutAlt className="mr-2" />
+            Logout
+          </button>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -75,19 +96,26 @@ const Navbar = () => {
           Agents
         </Link>
         <Link
-          to="/login"
-          className="flex items-center transition hover:text-yellow-300"
-        >
-          <FaSignInAlt className="mr-2" />
-          Login
-        </Link>
-        <Link
           to="/register"
           className="flex items-center transition hover:text-yellow-300"
         >
           <FaUser className="mr-2" />
           Register
         </Link>
+        <Link
+          to="/booked-listings"
+          className="flex items-center transition hover:text-yellow-300"
+        >
+          <FaListAlt className="mr-2" />
+          Booked Listings
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="flex items-center transition hover:text-yellow-300"
+        >
+          <FaSignOutAlt className="mr-2" />
+          Logout
+        </button>
       </div>
     </nav>
   );
